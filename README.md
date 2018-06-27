@@ -32,7 +32,7 @@ The earliest supported version is currently:
 
 ### edb_client_install
 
-This resource installs EPAS client packages.
+This resource installs EPAS client packages.  Note: if the EDB Yum repository is to be installed with `setup_repo`, `edb_username` and `edb_password` must be provided
 
 #### Actions
 
@@ -50,6 +50,8 @@ Name                | Types             | Description                           
 `password`          | String, nil       | Pass in a password, or have the cookbook generate one for you | 'generate'                                | no
 `port`              | [String, Integer] | Database listen port                                          | 5444                                      | no
 `initdb_locale`     | String            | Locale to initialize the database with                        | 'UTF-8'                                   | no
+`edb_username`      | String            | EDB Yum repository username                                   | ''                                        | no
+`edb_password`      | String            | EDB Yum repository password                                   | ''                                        | no
 
 #### Examples
 
@@ -63,7 +65,7 @@ end
 
 ### edb_server_install
 
-This resource installs EPAS client and server packages.
+This resource installs EPAS client and server packages.  Note: if the EDB Yum repository is to be installed with `setup_repo`, `edb_username` and `edb_password` must be provided
 
 #### Actions
 
@@ -81,6 +83,8 @@ Name                | Types           | Description                             
 `external_pid_file` | String          | Path of PID file                              | `/var/run/edb/<version>-main.pid</version>`        | no
 `password`          | String, nil     | Set enterprisedb user password                | 'generate'                                         | no
 `port`              | String, Integer | Set listen port of EPAS service               | 5444                                               | no
+`edb_username`      | String          | EDB Yum repository username                   | ''                                                 | no
+`edb_password`      | String          | EDB Yum repository password                   | ''                                                 | no
 
 #### Examples
 
