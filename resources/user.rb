@@ -1,5 +1,5 @@
 #
-# Cookbook:: postgresql
+# Cookbook:: edb
 # Resource:: user
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,16 +29,16 @@ property :attributes,         Hash, default: {}
 property :sensitive,          [true, false], default: true
 
 # Connection prefernces
-property :user,     String, default: 'postgres'
-property :database, String
+property :user,     String, default: 'enterprisedb'
+property :database, String, default: 'edb'
 property :host,     [String, nil]
-property :port,     Integer, default: 5432
+property :port,     Integer, default: 5444
 
 action :create do
   Chef::Log.warn('You cannot use "attributes" property with create action.') unless new_resource.attributes.empty?
 
-  execute "create postgresql user #{new_resource.create_user}" do # ~FC009
-    user 'postgres'
+  execute "create database user #{new_resource.create_user}" do # ~FC009
+    user 'enterprisedb'
     command create_user_sql(new_resource)
     sensitive new_resource.sensitive
     not_if { slave? }
@@ -48,8 +48,8 @@ end
 
 action :update do
   if new_resource.attributes.empty?
-    execute "update postgresql user #{new_resource.create_user}" do
-      user 'postgres'
+    execute "update enterprisedb user #{new_resource.create_user}" do
+      user 'enterprisedb'
       command update_user_sql(new_resource)
       sensitive true
       not_if { slave? }
@@ -63,8 +63,8 @@ action :update do
             "'#{value}'"
           end
 
-      execute "Update postgresql user #{new_resource.create_user} to set #{attr}" do
-        user 'postgres'
+      execute "Update enterprisedb user #{new_resource.create_user} to set #{attr}" do
+        user 'enterprisedb'
         command update_user_with_attributes_sql(new_resource, v)
         sensitive true
         not_if { slave? }
@@ -75,8 +75,8 @@ action :update do
 end
 
 action :drop do
-  execute "drop postgresql user #{new_resource.create_user}" do
-    user 'postgres'
+  execute "drop enterprisedb user #{new_resource.create_user}" do
+    user 'enterprisedb'
     command drop_user_sql(new_resource)
     sensitive true
     not_if { slave? }
@@ -85,5 +85,5 @@ action :drop do
 end
 
 action_class do
-  include PostgresqlCookbook::Helpers
+  include EnterprisedbCookbook::Helpers
 end

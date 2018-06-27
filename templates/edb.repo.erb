@@ -1,0 +1,83 @@
+# This file was automatically generated and dropped off by Chef!
+[edb10]
+name=EnterpriseDB Advanced Server 10 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/10/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '10' ? '1' : '0' %>
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[edbas96]
+name=EnterpriseDB Advanced Server 9.6 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.6/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '96' ? '1' : '0' %>
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[ppas95]
+name=Postgres Plus Advanced Server 9.5 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.5/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '95' ? '1' : '0' %>
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[ppas94]
+name=Postgres Plus Advanced Server 9.4 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.4/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '94' ? '1' : '0' %>
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[ppas93]
+name=Postgres Plus Advanced Server 9.3 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.3/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '93' ? '1' : '0' %>
+gpgcheck=0
+
+
+[ppas92]
+name=Postgres Plus Advanced Server 9.2 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.2/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '92' ? '1' : '0' %>
+gpgcheck=0
+
+
+[ppas91]
+name=Postgres Plus Advanced Server 9.1 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/9.1/redhat/rhel-$releasever-$basearch
+enabled=<%= @enable_version == '91' ? '1' : '0' %>
+gpgcheck=0
+
+
+[enterprisedb-tools]
+name=EnterpriseDB Tools $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/tools/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[enterprisedb-tools-testing]
+name=EnterpriseDB Tools Testing - Not For Production $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/tools-testing/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[enterprisedb-dependencies]
+name=EnterpriseDB Dependencies $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/dependencies/redhat/rhel-$releasever-$basearch
+enabled=1
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[enterprisedb-xdb60]
+name=EnterpriseDB XDB 6.0 $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/xdb60/redhat/rhel-$releasever-$basearch
+enabled=0
+gpgcheck=1
+gpgkey=file:///etc/pki/rpm-gpg/ENTERPRISEDB-GPG-KEY
+
+[edb-repos]
+name=EnterpriseDB Repos $releasever - $basearch
+baseurl=https://<%= @edb_username %>:<%= @edb_password %>@yum.enterprisedb.com/edbrepos
+enabled=1
+gpgcheck=0

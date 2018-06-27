@@ -21,32 +21,32 @@ property :source_directory, String
 property :version,          String, default: '--1.0'
 
 # Connection prefernces
-property :user,     String, default: 'postgres'
+property :user,     String, default: 'enterprisedb'
 property :database, String, required: true
 property :host,     [String, nil]
-property :port,     Integer, default: 5432
+property :port,     Integer, default: 5444
 
 action :create do
-  extension_path = ::File.join(new_resource.source_directory, "#{new_resource.extension}#{new_resource.version}.sql")
-  cmd = %(psql -f "#{extension_path}" -d test_1 -U postgres --port 5432)
+#  extension_path = ::File.join("/usr/edb/as#{node.run_state['epas']['version']}/share/extension/", "#{new_resource.extension}#{new_resource.version}.sql")
+#  cmd = %(psql -f "#{extension_path}" -d edb -U enterprisedb --port 5444)
+#
+#  bash "Load extension #{new_resource.name}" do
+#    code cmd
+#    user 'enterprisedb'
+#    action :run
+#    not_if { slave? }
+#    not_if { extension_installed?(new_resource) }
+#  end
 
-  bash "Load extension #{new_resource.name}" do
-    code cmd
-    user 'postgres'
-    action :run
-    not_if { slave? }
-    not_if { extension_installed?(new_resource) }
-  end
-
-  control_file_path = ::File.join(new_resource.source_directory, "#{new_resource.extension}.control")
+  control_file_path = ::File.join("/usr/edb/as#{node.run_state['epas']['version']}/share/extension/", "#{new_resource.extension}.control")
 
   link control_file_path do
-    to "/usr/pgsql-#{node.run_state['postgresql']['version']}/share/extension/#{new_resource.extension}.control"
+    to "/usr/edb/as#{node.run_state['epas']['version']}/share/extension/#{new_resource.extension}.control"
   end
 
   bash "CREATE EXTENSION #{new_resource.name}" do
     code create_extension_sql(new_resource)
-    user 'postgres'
+    user 'enterprisedb'
     action :run
     not_if { slave? }
     not_if { extension_installed?(new_resource) }
@@ -55,8 +55,8 @@ end
 
 action :drop do
   bash "DROP EXTENSION #{new_resource.name}" do
-    code psql_command_string(new_resource.database, "DROP EXTENSION IF EXISTS \"#{new_resource.extension}\"")
-    user 'postgres'
+    code psql_command_string(new_resource, "DROP EXTENSION IF EXISTS \"#{new_resource.extension}\"")
+    user 'enterprisedb'
     action :run
     not_if { slave? }
     only_if { extension_installed?(new_resource) }
@@ -64,5 +64,5 @@ action :drop do
 end
 
 action_class do
-  include PostgresqlCookbook::Helpers
+  include EnterprisedbCookbook::Helpers
 end

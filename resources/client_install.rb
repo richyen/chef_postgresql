@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 #
-# Cookbook:: postgresql
+# Cookbook:: edb
 # Resource:: client_install
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,18 +18,20 @@
 
 property :version,    String, default: '9.6'
 property :setup_repo, [true, false], default: true
+property :edb_username,    String, default: ''
+property :edb_password,    String, default: ''
 
 action :install do
-  postgresql_repository 'Add downloads.postgresql.org repository' do
-    version new_resource.version
+  edb_repository 'Add yum.enterprisedb.com repository' do
+    version        new_resource.version
+    edb_username   new_resource.edb_username
+    edb_password   new_resource.edb_password
     only_if { new_resource.setup_repo }
   end
 
   case node['platform_family']
-  when 'debian'
-    package "postgresql-client-#{new_resource.version}"
-  when 'rhel', 'fedora', 'amazon'
+  when 'rhel', 'fedora'
     ver = new_resource.version.delete('.')
-    package "postgresql#{ver}"
+    package "edb-as#{ver}-server-client"
   end
 end

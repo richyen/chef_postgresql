@@ -21,10 +21,10 @@ property :locale,   String, default: 'en_US.UTF-8'
 property :owner,    String
 
 # Connection prefernces
-property :user,     String, default: 'postgres'
+property :user,     String, default: 'enterprisedb'
 property :database, String, name_property: true
 property :host,     [String, nil], default: nil
-property :port,     Integer, default: 5432
+property :port,     Integer, default: 5444
 
 action :create do
   createdb = 'createdb'
@@ -54,7 +54,7 @@ action :drop do
     dropdb << " #{new_resource.database}"
 
     bash "drop postgresql database #{new_resource.database})" do
-      user 'postgres'
+      user 'enterprisedb'
       code dropdb
       not_if { slave? }
       only_if { database_exists?(new_resource) }
@@ -63,5 +63,5 @@ action :drop do
 end
 
 action_class do
-  include PostgresqlCookbook::Helpers
+  include EnterprisedbCookbook::Helpers
 end

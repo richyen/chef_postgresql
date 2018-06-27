@@ -12,10 +12,10 @@ All releases are tagged in git. To see the releases available to you see the cha
 
 ## Pull requests
 
-- <https://github.com/sous-chefs/postgresql/pulls>
+- <https://github.com/EnterpriseDB/edb/pulls>
 
 ## Issues
 
 Need to report an issue? Use the github issues:
 
-- <https://github.com/sous-chefs/postgresql/issues>
+- <https://github.com/EnterpriseDB/edb/issues>

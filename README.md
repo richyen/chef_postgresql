@@ -1,30 +1,21 @@
-# postgresql cookbook
+# edb cookbook
 
-[![Build Status](https://travis-ci.org/sous-chefs/postgresql.svg?branch=master)](https://travis-ci.org/sous-chefs/postgresql) [![Cookbook Version](https://img.shields.io/cookbook/v/postgresql.svg)](https://supermarket.chef.io/cookbooks/postgresql)
-
-Installs and configures PostgreSQL as a client or a server.
-
-## Upgrading
-
-If you are wondering where all the recipes went in v7.0+, or how on earth I use this new cookbook please see upgrading.md for a full description.
+Installs and configures EDB Postgres Advanced Server (EPAS) as a client or a server.
 
 ## Requirements
 
 ### Platforms
 
-- Amazon Linux
-- Debian 7+
-- Ubuntu 14.04+
-- Red Hat/CentOS/Scientific 6+
+- Red Hat/CentOS 6+
 - Fedora
 
-## PostgreSQL version
+## EPAS version
 
 We follow the currently supported versions listed on <https://www.postgresql.org/support/versioning/>
 
 The earliest supported version is currently:
 
-- 9.3 (9.3.23)
+- 9.6
 
 ### Chef
 
@@ -37,9 +28,9 @@ The earliest supported version is currently:
 
 ## Resources
 
-### postgresql_client_install
+### edb_client_install
 
-This resource installs PostgreSQL client packages.
+This resource installs EPAS client packages.
 
 #### Actions
 
@@ -49,28 +40,28 @@ This resource installs PostgreSQL client packages.
 
 Name                | Types             | Description                                                   | Default                                   | Required?
 ------------------- | ----------------- | ------------------------------------------------------------- | ----------------------------------------- | ---------
-`version`           | String            | Version of PostgreSQL to install                              | '9.6'                                     | no
-`setup_repo`        | Boolean           | Define if you want to add the PostgreSQL repo                 | true                                      | no
+`version`           | String            | Version of EPAS to install                                    | '9.6'                                     | no
+`setup_repo`        | Boolean           | Define if you want to add the EPAS repo                       | true                                      | no
 `hba_file`          | String            |                                                               | `#{conf_dir}/main/pg_hba.conf`            | no
 `ident_file`        | String            |                                                               | `#{conf_dir}/main/pg_ident.conf`          | no
-`external_pid_file` | String            |                                                               | `/var/run/postgresql/#{version}-main.pid` | no
+`external_pid_file` | String            |                                                               | `/var/run/edb/#{version}-main.pid`        | no
 `password`          | String, nil       | Pass in a password, or have the cookbook generate one for you | 'generate'                                | no
-`port`              | [String, Integer] | Database listen port                                          | 5432                                      | no
+`port`              | [String, Integer] | Database listen port                                          | 5444                                      | no
 `initdb_locale`     | String            | Locale to initialize the database with                        | 'UTF-8'                                   | no
 
 #### Examples
 
-To install '9.5' version:
+To install '9.6' version:
 
 ```
-postgresql_client_install 'My Postgresql Client install' do
-  version '9.5'
+edb_client_install 'My EPAS Client install' do
+  version '9.6'
 end
 ```
 
-### postgresql_server_install
+### edb_server_install
 
-This resource installs PostgreSQL client and server packages.
+This resource installs EPAS client and server packages.
 
 #### Actions
 
@@ -81,65 +72,65 @@ This resource installs PostgreSQL client and server packages.
 
 Name                | Types           | Description                                   | Default                                            | Required?
 ------------------- | --------------- | --------------------------------------------- | -------------------------------------------------- | ---------
-`version`           | String          | Version of PostgreSQL to install              | '9.6'                                              | no
-`setup_repo`        | Boolean         | Define if you want to add the PostgreSQL repo | true                                               | no
+`version`           | String          | Version of EPAS to install                    | '9.6'                                              | no
+`setup_repo`        | Boolean         | Define if you want to add the EPAS repo       | true                                               | no
 `hba_file`          | String          | Path of pg_hba.conf file                      | `<default_os_path>/pg_hba.conf'`                   | no
 `ident_file`        | String          | Path of pg_ident.conf file                    | `<default_os_path>/pg_ident.conf`                  | no
-`external_pid_file` | String          | Path of PID file                              | `/var/run/postgresql/<version>-main.pid</version>` | no
-`password`          | String, nil     | Set postgres user password                    | 'generate'                                         | no
-`port`              | String, Integer | Set listen port of postgresql service         | 5432                                               | no
+`external_pid_file` | String          | Path of PID file                              | `/var/run/edb/<version>-main.pid</version>`        | no
+`password`          | String, nil     | Set enterprisedb user password                | 'generate'                                         | no
+`port`              | String, Integer | Set listen port of EPAS service               | 5444                                               | no
 
 #### Examples
 
-To install PostgreSQL server, set you own postgres password and set another service port.
+To install EPAS server, set you own enterprisedb password and set another service port.
 
 ```
-postgresql_server_install 'My Postgresql Server install' do
+edb_server_install 'My EPAS Server install' do
   action :install
 end
 
-postgresql_server_install 'Setup my postgresql 9.5 server' do
+edb_server_install 'Setup my EPAS 9.6 server' do
   password 'MyP4ssw0d'
   port 5433
   action :create
 end
 ```
 
-### postgresql_server_conf
+### edb_server_conf
 
 This resource manages postgresql.conf configuration file.
 
 #### Actions
 
-- `modify` - (default) Manager PostgreSQL configuration file (postgresql.conf)
+- `modify` - (default) Manager EPAS configuration file (postgresql.conf)
 
 #### Properties
 
 Name                   | Types  | Description                             | Default                                             | Required?
 ---------------------- | ------ | --------------------------------------- | --------------------------------------------------- | ---------
-`version`              | String | Version of PostgreSQL to install        | '9.6'                                               | no
-`data_directory`       | String | Path of postgresql data directory       | `<default_os_data_path>`                            | no
+`version`              | String | Version of EPAS to install              | '9.6'                                               | no
+`data_directory`       | String | Path of EPAS data directory             | `<default_os_data_path>`                            | no
 `hba_file`             | String | Path of pg_hba.conf file                | `<default_os_conf_path>/pg_hba.conf`                | no
 `ident_file`           | String | Path of pg_ident.conf file              | `<default_os_conf_path>/pg_ident.conf`              | no
-`external_pid_file`    | String | Path of PID file                        | `/var/run/postgresql/<postgresql_version>-main.pid` | no
-`stats_temp_directory` | String | Path of stats file                      | `/var/run/postgresql/version>-main.pg_stat_tmp`     | no
+`external_pid_file`    | String | Path of PID file                        | `/var/run/edb/<edb_version>-main.pid`               | no
+`stats_temp_directory` | String | Path of stats file                      | `/var/run/edb/version>-main.pg_stat_tmp`            | no
 `additional_config`    | Hash   | Extra configuration for the config file | {}                                                  | no
 
 #### Examples
 
-To setup your PostgreSQL configuration with a specific data directory. If you have installed a specific version of PostgreSQL (different from 9.6), you must specify version in this resource too.
+To setup your EPAS configuration with a specific data directory. If you have installed a specific version of EPAS (different from 9.6), you must specify version in this resource too.
 
 ```
-postgresql_server_conf 'My PostgreSQL Config' do
-  version '9.5'
-  data_directory '/data/postgresql/9.5/main'
+edb_server_conf 'My EPAS Config' do
+  version '9.6'
+  data_directory '/data/9.6/main'
   notification :reload
 end
 ```
 
-### postgresql_extension
+### edb_extension
 
-This resource manages postgresql extensions for a given database.
+This resource manages EPAS extensions for a given database.
 
 #### Actions
 
@@ -159,19 +150,16 @@ Name          | Types  | Description                                            
 To install the `adminpack` extension:
 
 ```ruby
-# Add the contrib package in Ubuntu/Debian
-package 'postgresql-contrib-9.6'
-
 # Install adminpack extension
-postgresql_extension 'postgres adminpack' do
-  database 'postgres'
-  extension 'adminpack'
+edb_extension 'EDBAS pg_buffercache' do
+  database 'edb'
+  extension 'pg_buffercache'
 end
 ```
 
-### postgresql_access
+### edb_access
 
-This resource uses the accumulator pattern to build up the `pg_hba.conf` file via chef resources instead of piling on a mountain of chef attributes to make this cookbook more reusable. It directly mirrors the configuration options of the postgres hba file in the resource and by default notifies the server with a reload to avoid a full restart, causing a potential outage of service. To revoke access, simply remove the resource and the access change won't be computed into the final `pg_hba.conf`
+This resource uses the accumulator pattern to build up the `pg_hba.conf` file via chef resources instead of piling on a mountain of chef attributes to make this cookbook more reusable. It directly mirrors the configuration options of the `pg_hba.conf` file in the resource and by default notifies the server with a reload to avoid a full restart, causing a potential outage of service. To revoke access, simply remove the resource and the access change won't be computed into the final `pg_hba.conf`
 
 #### Actions
 
@@ -183,25 +171,25 @@ Name            | Types  | Description                                          
 --------------- | ------ | ----------------------------------------------------------------------------------------- | ----------------- | ---------
 `name`          | String | Name of the access resource, this is left as a comment inside the `pg_hba` config         | Resource name     | yes
 `source`        | String | The cookbook template filename if you want to use your own custom template                | 'pg_hba.conf.erb' | yes
-`cookbook`      | String | The cookbook to look in for the template source                                           | 'postgresql'      | yes
+`cookbook`      | String | The cookbook to look in for the template source                                           | 'edb'             | yes
 `comment`       | String | A comment to leave above the entry in `pg_hba`                                            | nil               | no
 `access_type`   | String | The type of access, e.g. local or host                                                    | 'local'           | yes
 `access_db`     | String | The database to access. Can use 'all' for all databases                                   | 'all'             | yes
 `access_user`   | String | The user accessing the database. Can use 'all' for any user                               | 'all'             | yes
 `access_addr`   | String | The address(es) allowed access. Can be nil if method ident is used since it is local then | nil               | no
 `access_method` | String | Authentication method to use                                                              | 'ident'           | yes
-`notification`  | Symbol | How to notify Postgres of the access change.                                              | :reload           | yes
+`notification`  | Symbol | How to notify EPAS of the access change.                                                  | :reload           | yes
 
 #### Examples
 
-To grant access to the postgresql user with ident authentication:
+To grant access to the enterprisedb user with ident authentication:
 
 ```ruby
-postgresql_access 'local_postgres_superuser' do
-  comment 'Local postgres superuser access'
+edb_access 'local_enterprisedb_superuser' do
+  comment 'Local enterprisedb superuser access'
   access_type 'local'
   access_db 'all'
-  access_user 'postgres'
+  access_user 'enterprisedb'
   access_addr nil
   access_method 'ident'
 end
@@ -210,20 +198,20 @@ end
 This generates the following line in the `pg_hba.conf`:
 
 ```
-# Local postgres superuser access
-local   all             postgres                                ident
+# Local enterprisedb superuser access
+local   all             enterprisedb                            ident
 ```
 
-**Note**: The template by default generates a local access for Unix domain sockets only to support running the SQL execute resources. In Postgres version 9.1 and higher, the method is 'peer' instead of 'ident' which is identical. It looks like this:
+**Note**: The template by default generates a local access for Unix domain sockets only to support running the SQL execute resources. In EPAS version 9.1 and higher, the method is 'peer' instead of 'ident' which is identical. It looks like this:
 
 ```
 # "local" is for Unix domain socket connections only
 local   all             all                                     peer
 ```
 
-### postgresql_ident
+### edb_ident
 
-This resource generate `pg_ident.conf` configuration file to manage user mapping between system and PostgreSQL users.
+This resource generate `pg_ident.conf` configuration file to manage user mapping between system and EPAS users.
 
 #### Actions
 
@@ -235,18 +223,18 @@ Name           | Types       | Description                                      
 -------------- | ----------- | -------------------------------------------------------------------------- | ------------------- | ---------
 `mapname`      | String      | Name of the user mapping                                                   | Resource name       | yes
 `source`       | String      | The cookbook template filename if you want to use your own custom template | 'pg_ident.conf.erb' | no
-`cookbook`     | String      | The cookbook to look in for the template source                            | 'postgresql'        | no
+`cookbook`     | String      | The cookbook to look in for the template source                            | 'edb'               | no
 `comment`      | String, nil | A comment to leave above the entry in `pg_ident`                           | nil                 | no
 `system_user`  | String      | System user or regexp used for the mapping                                 | None                | yes
 `pg_user`      | String      | Pg user or regexp used for the mapping                                     | None                | yes
-`notification` | Symbol      | How to notify Postgres of the access change.                               | :reload             | no
+`notification` | Symbol      | How to notify EPAS of the access change.                                   | :reload             | no
 
 #### Examples
 
-Creates a `mymapping` mapping that map `john` system user to `user1` PostgreSQL user:
+Creates a `mymapping` mapping that map `john` system user to `user1` EPAS user:
 
 ```ruby
-postgresql_ident 'Map john to user1' do
+edb_ident 'Map john to user1' do
   comment 'John Mapping'
   mapname 'mymapping'
   system_user 'john'
@@ -266,7 +254,7 @@ mymapping       john                    user1
 To grant access to the foo user with password authentication:
 
 ```ruby
-postgresql_access 'local_foo_user' do
+edb_access 'local_foo_user' do
   comment 'Foo user access'
   access_type 'host'
   access_db 'all'
@@ -279,13 +267,13 @@ end
 This generates the following line in the `pg_hba.conf`:
 
 ```
-# Local postgres superuser access
+# Local enterprsiedb superuser access
 host   all             foo               127.0.0.1/32           ident
 ```
 
-### postgresql_database
+### edb_database
 
-This resource manages PostgreSQL databases.
+This resource manages EPAS databases.
 
 #### Actions
 
@@ -297,10 +285,10 @@ This resource manages PostgreSQL databases.
 Name       | Types   | Description                                                         | Default             | Required?
 ---------- | ------- | ------------------------------------------------------------------- | ------------------- | ---------
 `database` | String  | Name of the database to create                                      | Resource name       | yes
-`user`     | String  | User which run psql command                                         | 'postgres'          | no
+`user`     | String  | User which run psql command                                         | 'enterprisedb'      | no
 `template` | String  | Template used to create the new database                            | 'template1'         | no
 `host`     | String  | Define the host server where the database creation will be executed | Not set (localhost) | no
-`port`     | Integer | Define the port of Postgresql server                                | 5432                | no
+`port`     | Integer | Define the port of EPAS server                                      | 5444                | no
 `encoding` | String  | Define database encoding                                            | 'UTF-8'             | no
 `locale`   | String  | Define database locale                                              | 'en_US.UTF-8'       | no
 `owner`    | String  | Define the owner of the database                                    | Not set             | no
@@ -310,14 +298,14 @@ Name       | Types   | Description                                              
 To create database named 'my_app' with owner 'user1':
 
 ```ruby
-postgresql_database 'my_app' do
+edb_database 'my_app' do
   owner 'user1'
 end
 ```
 
-### postgresql_user
+### edb_user
 
-This resource manage PostgreSQL users.
+This resource manage EPAS users.
 
 #### Actions
 
@@ -345,7 +333,7 @@ Name                 | Types   | Description                                    
 Create an user `user1` with a password, with `createdb` role and set an expiration date to 2018, Dec 21.
 
 ```ruby
-postgresql_user 'user1' do
+edb_user 'user1' do
   password 'UserP4ssword'
   createdb true
   valid_until '2018-12-31'
@@ -354,30 +342,33 @@ end
 
 ## Usage
 
-To install and configure your PostgreSQL instance you need to create your own cookbook and call needed resources with your own parameters.
+To install and configure your EPAS instance you need to create your own cookbook and call needed resources with your own parameters.
 
 More examples can be found in `test/cookbooks/test/recipes`
 
-## Example Useage
+## Example Usage
 
-Example: cookbooks/my_postgresql/recipes/default.rb
+Example: cookbooks/edb/recipes/default.rb
 
 ```ruby
-postgresql_client_install 'Postgresql Client' do
+edb_client_install 'EPAS Client' do
   setup_repo false
-  version '9.5'
+  version '9.6'
 end
 
-postgresql_server_install 'Postgresql Server' do
-  version '9.5'
+edb_server_install 'EPAS Server' do
+  version '9.6'
   setup_repo false
   password 'P0sgresP4ssword'
 end
 
-postgresql_server_conf 'PostgreSQL Config' do
+edb_server_conf 'EPAS Config' do
   notification :reload
 end
 ```
+
+## Known issues
+1. As of July 2018, creation of extensions is not fully supported
 
 ## Contributing
 

@@ -1,52 +1,52 @@
-postgresql_server_install 'postgresql' do
+edb_server_install 'EDB Postgres Advanced Server' do
   password '12345'
-  port 5432
+  port 5444
   setup_repo true
   action [:install, :create]
 end
 
-user 'shef'
+user 'edb'
 
-postgresql_ident 'postgresl mapping' do
+edb_ident 'edb mapping' do
   mapname 'testmap'
-  system_user 'postgres'
-  pg_user 'postgres'
-  notifies :reload, 'service[postgresql]'
+  system_user 'edb'
+  pg_user 'edb'
+  notifies :reload, 'service[edb-as9.6-server]'
 end
 
-postgresql_ident 'shef mapping' do
+edb_ident 'enterprisedb mapping' do
   mapname 'testmap'
-  system_user 'shef'
-  pg_user 'sous_chef'
-  notifies :reload, 'service[postgresql]'
+  system_user 'enterprisedb'
+  pg_user 'edb_user'
+  notifies :reload, 'service[edb-as9.6-server]'
 end
 
-postgresql_access 'postgresql host superuser' do
+edb_access 'support host superuser' do
   access_type 'host'
   access_db 'all'
-  access_user 'postgres'
+  access_user 'support'
   access_addr '127.0.0.1/32'
   access_method 'md5'
-  notifies :reload, 'service[postgresql]'
+  notifies :reload, 'service[edb-as9.6-server]'
 end
 
-postgresql_access 'shef mapping' do
+edb_access 'edb mapping' do
   access_type 'local'
   access_db 'all'
   access_user 'all'
   access_method 'peer map=testmap'
   cookbook 'test'
-  notifies :reload, 'service[postgresql]'
+  notifies :reload, 'service[edb-as9.6-server]'
 end
 
-postgresql_user 'sous_chef' do
+edb_user 'edb_user' do
   superuser true
   password '67890'
   sensitive false
 end
 
-service 'postgresql' do
-  extend PostgresqlCookbook::Helpers
+service 'edb-as9.6-server' do
+  extend EnterprisedbCookbook::Helpers
   service_name lazy { platform_service_name }
   supports restart: true, status: true, reload: true
   action :nothing

@@ -1,5 +1,5 @@
 #
-# Cookbook:: postgresql
+# Cookbook:: edb
 # Library:: helpers
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 
-module PostgresqlCookbook
+module EnterprisedbCookbook
   module Helpers
     include Chef::Mixin::ShellOut
 
@@ -33,8 +33,8 @@ module PostgresqlCookbook
 
     def execute_sql(new_resource, query)
       # If we don't pass in a user to the resource
-      # default to the postgres user
-      user = new_resource.user ? new_resource.user : 'postgres'
+      # default to the enterprisedb user
+      user = new_resource.user ? new_resource.user : 'enterprisedb'
 
       # Query could be a String or an Array of Strings
       statement = query.is_a?(String) ? query : query.join("\n")
@@ -77,7 +77,7 @@ module PostgresqlCookbook
     end
 
     def alter_role_sql(new_resource)
-      sql = %(ALTER ROLE postgres ENCRYPTED PASSWORD '#{postgres_password(new_resource)}';)
+      sql = %(ALTER ROLE enterprisedb ENCRYPTED PASSWORD '#{enterprisedb_password(new_resource)}';)
       psql_command_string(new_resource, sql)
     end
 
@@ -89,7 +89,7 @@ module PostgresqlCookbook
     end
 
     def user_has_password?(new_resource)
-      sql = %(SELECT rolpassword from pg_authid WHERE rolname='postgres' AND rolpassword IS NOT NULL;)
+      sql = %(SELECT rolpassword from pg_authid WHERE rolname='enterprisedb' AND rolpassword IS NOT NULL;)
       cmd = psql_command_string(new_resource, sql)
 
       res = execute_sql(new_resource, cmd)
@@ -138,49 +138,27 @@ module PostgresqlCookbook
       psql_command_string(new_resource, sql)
     end
 
-    def data_dir(version = node.run_state['postgresql']['version'])
+    def data_dir(version = node.run_state['epas']['version'])
       case node['platform_family']
       when 'rhel', 'fedora'
-        "/var/lib/pgsql/#{version}/data"
-      when 'amazon'
-        if node['virtualization']['system'] == 'docker'
-          "/var/lib/pgsql#{version.delete('.')}/data"
-        else
-          "/var/lib/pgsql/#{version}/data"
-        end
-      when 'debian'
-        "/var/lib/postgresql/#{version}/main"
+        "/var/lib/edb/as#{version}/data"
       end
     end
 
-    def conf_dir(version = node.run_state['postgresql']['version'])
+    def conf_dir(version = node.run_state['epas']['version'])
       case node['platform_family']
       when 'rhel', 'fedora'
-        "/var/lib/pgsql/#{version}/data"
-      when 'amazon'
-        if node['virtualization']['system'] == 'docker'
-          "/var/lib/pgsql#{version.delete('.')}/data"
-        else
-          "/var/lib/pgsql/#{version}/data"
-        end
-      when 'debian'
-        "/etc/postgresql/#{version}/main"
+        "/var/lib/edb/as#{version}/data"
       end
     end
 
     # determine the platform specific service name
-    def platform_service_name(version = node.run_state['postgresql']['version'])
+    def platform_service_name(version = node.run_state['epas']['version'])
       case node['platform_family']
       when 'rhel', 'fedora'
-        "postgresql-#{version}"
-      when 'amazon'
-        if node['virtualization']['system'] == 'docker'
-          "postgresql#{version.delete('.')}"
-        else
-          "postgresql-#{version}"
-        end
+        "edb-as-#{version}"
       else
-        'postgresql'
+        "ppas-#{version}"
       end
     end
 
@@ -201,16 +179,12 @@ module PostgresqlCookbook
 
     # determine the platform specific server package name
     def server_pkg_name
-      platform_family?('debian') ? "postgresql-#{new_resource.version}" : "postgresql#{new_resource.version.delete('.')}-server"
+      "edb-as#{new_resource.version.delete('.')}-server"
     end
 
-    # determine the appropriate DB init command to run based on RHEL/Fedora/Amazon release
+    # determine the appropriate DB init command to run based on RHEL/Fedora release
     def rhel_init_db_command
-      if platform_family?('fedora') || (platform_family?('rhel') && node['platform_version'].to_i >= 7)
-        "/usr/pgsql-#{new_resource.version}/bin/postgresql#{new_resource.version.delete('.')}-setup initdb"
-      else
-        "service #{platform_service_name} initdb"
-      end
+        "/usr/edb/as#{new_resource.version}/bin/initdb"
     end
 
     # Given the base URL build the complete URL string for a yum repo
@@ -227,17 +201,16 @@ module PostgresqlCookbook
     # Build the platform string that makes up the final component of the yum repo URL
     def yum_repo_platform_string
       platform = platform?('fedora') ? 'fedora' : 'rhel'
-      release = platform?('amazon') ? '6' : '$releasever'
+      release = '$releasever'
       "#{platform}-#{release}-$basearch"
     end
 
-    # On Amazon use the RHEL 6 packages. Otherwise use the releasever yum variable
     def yum_releasever
-      platform?('amazon') ? '6' : '$releasever'
+      '$releasever'
     end
 
     # Generate a password if the value is set to generate.
-    def postgres_password(new_resource)
+    def enterprisedb_password(new_resource)
       new_resource.password == 'generate' ? secure_random : new_resource.password
     end
   end

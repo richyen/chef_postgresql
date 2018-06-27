@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 #
-# Cookbook:: postgresql
+# Cookbook:: edb
 # Resource:: access
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@
 
 property :mapname,     String, required: true
 property :source,      String, default: 'pg_ident.conf.erb'
-property :cookbook,    String, default: 'postgresql'
+property :cookbook,    String, default: 'edb'
 property :system_user, String, required: true
 property :pg_user,     String, required: true
 property :comment,     [String, nil], default: nil
@@ -29,8 +29,8 @@ action :create do
     edit_resource(:template, "#{conf_dir}/pg_ident.conf") do |new_resource|
       source new_resource.source
       cookbook new_resource.cookbook
-      owner 'postgres'
-      group 'postgres'
+      owner 'enterprisedb'
+      group 'enterprisedb'
       mode '0640'
       variables[:pg_ident] ||= {}
       variables[:pg_ident][new_resource.name] = {
@@ -51,5 +51,5 @@ action :trigger do
 end
 
 action_class do
-  include PostgresqlCookbook::Helpers
+  include EnterprisedbCookbook::Helpers
 end
