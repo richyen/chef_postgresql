@@ -2,6 +2,8 @@
 
 Installs and configures EDB Postgres Advanced Server (EPAS) as a client or a server.
 
+This cookbook assumes that it is placed in a folder named `edb`
+
 ## Requirements
 
 ### Platforms

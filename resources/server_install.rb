@@ -51,10 +51,19 @@ action :install do
 end
 
 action :create do
+  ENV['PGDATA'] = "#{conf_dir}"
   execute 'init_db' do
     command rhel_init_db_command
+    user 'enterprisedb'
     not_if { initialized? }
     only_if { platform_family?('rhel', 'fedora') }
+  end
+
+  directory "#{conf_dir}/pg_log" do
+    owner 'enterprisedb'
+    group 'enterprisedb'
+    mode '0700'
+    action :create
   end
 
   # We use to use find_resource here.
